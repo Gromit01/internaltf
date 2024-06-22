@@ -9,7 +9,14 @@
 
 void CCore::Load()
 {
-	// Check the DirectX version
+	const int dxLevel = U::ConVars.FindVar("mat_dxlevel")->GetInt();
+	if (dxLevel < 90)
+	{
+		I::CVar->ConsoleColorPrintf(Color_t(255, 0, 0, 255), "Failed to load, please remove -dxlevel from your launch arguments and try again.\n");
+		MessageBoxA(nullptr, "Your DirectX version is too low!\nPlease use dxlevel 90 or higher", "Error", MB_ICONERROR);
+		bHasFailed = true;
+		return;
+	}
 
 	U::Signatures.Initialize();
 	U::Interfaces.Initialize();
@@ -21,6 +28,8 @@ void CCore::Load()
 	F::Configs.LoadConfig(F::Configs.sCurrentConfig, false);
 	F::Menu.ConfigLoaded = true;
 
+	I::CVar->ConsoleColorPrintf(Vars::Menu::Theme::Accent.Map["default"], "%s Loaded!\n Press 'Insert' or 'F3' to Open the Menu", Vars::Menu::CheatName.Map["default"].c_str());
+	I::MatSystemSurface->PlaySound("hl1/fvox/activated.wav");
 	SDK::Output("Amalgam", "Loaded", { 175, 150, 255, 255 });
 }
 
@@ -34,6 +43,10 @@ void CCore::Unload()
 
 	F::Visuals.RestoreWorldModulation();
 	Vars::Visuals::World::SkyboxChanger.Value = "Off"; // hooks won't run, remove here
+
+	I::CVar->ConsoleColorPrintf(Vars::Menu::Theme::Accent.Value, "%s Unloaded!\n", Vars::Menu::CheatName.Value.c_str());
+	I::MatSystemSurface->PlaySound("hl1/fvox/deactivated.wav");
+
 	if (I::Input->CAM_IsThirdPerson())
 	{
 		auto pLocal = H::Entities.GetLocal();
