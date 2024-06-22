@@ -12,7 +12,6 @@ void CCore::Load()
 	const int dxLevel = U::ConVars.FindVar("mat_dxlevel")->GetInt();
 	if (dxLevel < 90)
 	{
-		I::CVar->ConsoleColorPrintf(Color_t(255, 0, 0, 255), "Failed to load, please remove -dxlevel from your launch arguments and try again.\n");
 		MessageBoxA(nullptr, "Your DirectX version is too low!\nPlease use dxlevel 90 or higher", "Error", MB_ICONERROR);
 		bHasFailed = true;
 		return;
@@ -30,7 +29,6 @@ void CCore::Load()
 
 	I::CVar->ConsoleColorPrintf(Vars::Menu::Theme::Accent.Map["default"], "%s Loaded!\n Press 'Insert' or 'F3' to Open the Menu", Vars::Menu::CheatName.Map["default"].c_str());
 	I::MatSystemSurface->PlaySound("hl1/fvox/activated.wav");
-	SDK::Output("Amalgam", "Loaded", { 175, 150, 255, 255 });
 }
 
 void CCore::Unload()
@@ -62,8 +60,6 @@ void CCore::Unload()
 		cl_wpn_sway_scale->SetValue(0.f);
 
 	Sleep(250);
-
-	SDK::Output("Amalgam", "Unloaded", { 175, 150, 255, 255 });
 }
 
 bool CCore::ShouldUnload()
