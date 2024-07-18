@@ -9,13 +9,7 @@
 
 void CCore::Load()
 {
-	const int dxLevel = U::ConVars.FindVar("mat_dxlevel")->GetInt();
-	if (dxLevel < 90)
-	{
-		MessageBoxA(nullptr, "Your DirectX version is too low!\nPlease use dxlevel 90 or higher", "Error", MB_ICONERROR);
-		bHasFailed = true;
-		return;
-	}
+	
 
 	U::Signatures.Initialize();
 	U::Interfaces.Initialize();
@@ -28,7 +22,7 @@ void CCore::Load()
 	F::Menu.ConfigLoaded = true;
 
 	I::CVar->ConsoleColorPrintf(Vars::Menu::Theme::Accent.Map["default"], "%s Loaded!\n Press 'Insert' or 'F3' to Open the Menu", Vars::Menu::CheatName.Map["default"].c_str());
-	I::MatSystemSurface->PlaySound("hl1/fvox/activated.wav");
+	
 }
 
 void CCore::Unload()
