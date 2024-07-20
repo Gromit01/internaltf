@@ -5,7 +5,7 @@ class CTickshiftHandler
 {
 	// logic
 	void Recharge(CUserCmd* pCmd, CTFPlayer* pLocal);
-	void Teleport(CUserCmd* pCmd, CTFPlayer* pLocal);
+	void Teleport(const CUserCmd* pCmd, CTFPlayer* pLocal);
 	void Doubletap(const CUserCmd* pCmd, CTFPlayer* pLocal);
 	void Speedhack(CUserCmd* pCmd);
 	bool ValidWeapon(CTFWeaponBase* pWeapon);
