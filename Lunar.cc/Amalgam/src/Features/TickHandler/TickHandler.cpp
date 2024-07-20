@@ -10,6 +10,7 @@ void CTickshiftHandler::Reset()
 	G::ShiftedTicks = G::ShiftedGoal = 0;
 }
 
+// recharge
 void CTickshiftHandler::Recharge(CUserCmd* pCmd, CTFPlayer* pLocal)
 {
 	bool bPassive = G::Recharge = false;
@@ -38,15 +39,27 @@ void CTickshiftHandler::Recharge(CUserCmd* pCmd, CTFPlayer* pLocal)
 		G::ShiftedGoal = G::ShiftedTicks + 1;
 }
 
-void CTickshiftHandler::Teleport(CUserCmd* pCmd)
+// warp
+void CTickshiftHandler::Teleport(const CUserCmd* pCmd, CTFPlayer* pLocal)
 {
+	int ticks_per_call = Vars::CL_Move::Doubletap::WarpRate.Value;
+
 	G::Warp = false;
 	if (!G::ShiftedTicks || G::DoubleTap || G::Recharge || bSpeedhack)
 		return;
 
+	float velocity_per_tick = pLocal->GetAbsVelocity().Length2D() * G::ShiftedGoal;
+	if (velocity_per_tick <= 0.f)
+		velocity_per_tick = 1.f;
+
+	int lag_comp_required = std::clamp((int)ceilf(64.f / velocity_per_tick), 0, 22);
+	ticks_per_call = lag_comp_required / 2;
+
 	G::Warp = Vars::CL_Move::Doubletap::Warp.Value;
-	if (G::Warp && bGoalReached)
-		G::ShiftedGoal = std::max(G::ShiftedTicks - Vars::CL_Move::Doubletap::WarpRate.Value + 1, 0);
+	if (G::Warp && bGoalReached) {
+		G::ShiftedGoal = std::max(G::ShiftedTicks - Vars::CL_Move::Doubletap::WarpRate.Value, 0);
+		ticks_per_call = 1;
+	}
 }
 
 void CTickshiftHandler::Doubletap(const CUserCmd* pCmd, CTFPlayer* pLocal)
@@ -193,7 +206,7 @@ void CTickshiftHandler::MovePre(CTFPlayer* pLocal)
 		return;
 
 	Recharge(pCmd, pLocal);
-	Teleport(pCmd);
+	Teleport(pCmd, pLocal);
 	Speedhack(pCmd);
 }
 
